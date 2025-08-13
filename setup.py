@@ -19,7 +19,7 @@ setup(
     description="A Model Context Protocol server for Instagram API integration",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/jlbadano/ig-mcp",
+    url="https://github.com/andremir/ig-mcp",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",

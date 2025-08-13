@@ -15,6 +15,11 @@ class MediaType(str, Enum):
     IMAGE = "IMAGE"
     VIDEO = "VIDEO"
     CAROUSEL_ALBUM = "CAROUSEL_ALBUM"
+    
+    @classmethod
+    def _missing_(cls, value):
+        """Handle unknown media types."""
+        return cls.IMAGE  # Default to IMAGE for unknown types
 
 
 class InsightMetric(str, Enum):
@@ -87,7 +92,7 @@ class InstagramMedia(BaseModel):
     """Instagram media post."""
 
     id: str
-    media_type: MediaType
+    media_type: Optional[MediaType] = MediaType.IMAGE
     media_url: Optional[str] = None
     permalink: Optional[str] = None
     thumbnail_url: Optional[str] = None
@@ -102,6 +107,17 @@ class InstagramMedia(BaseModel):
         """Parse timestamp from ISO string."""
         if isinstance(v, str):
             return datetime.fromisoformat(v.replace("Z", "+00:00"))
+        return v
+        
+    @field_validator("media_type", mode="before")
+    @classmethod
+    def parse_media_type(cls, v):
+        """Parse media type, default to IMAGE if unknown."""
+        if isinstance(v, str):
+            try:
+                return MediaType(v)
+            except ValueError:
+                return MediaType.IMAGE
         return v
 
 
@@ -143,7 +159,7 @@ class PublishMediaResponse(BaseModel):
     """Response from publishing media."""
 
     id: str
-    status: str = "published"
+    success: bool
 
 
 class InstagramError(BaseModel):

@@ -456,8 +456,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 - 📧 Email: support@example.com
-- 🐛 Issues: [GitHub Issues](https://github.com/jlbadano/ig-mcp/issues)
-- 📖 Documentation: [Wiki](https://github.com/jlbadano/ig-mcp/wiki)
+- 🐛 Issues: [GitHub Issues](https://github.com/andremir/ig-mcp/issues)
+- 📖 Documentation: [Wiki](https://github.com/andremir/ig-mcp/wiki)
 
 ## Acknowledgments
 

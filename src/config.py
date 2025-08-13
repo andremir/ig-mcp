@@ -3,7 +3,7 @@ Configuration management for Instagram MCP Server.
 """
 
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from pydantic import ConfigDict, Field, field_validator
 from pydantic_settings import BaseSettings
@@ -58,10 +58,10 @@ class InstagramMCPSettings(BaseSettings):
         True, description="Enable request validation"
     )
     max_request_size_mb: int = Field(10, description="Max request size in MB")
-    allowed_image_formats: List[str] = Field(
+    allowed_image_formats: Union[List[str], str] = Field(
         ["jpg", "jpeg", "png", "gif"], description="Allowed image formats"
     )
-    allowed_video_formats: List[str] = Field(
+    allowed_video_formats: Union[List[str], str] = Field(
         ["mp4", "mov"], description="Allowed video formats"
     )
 
@@ -93,7 +93,25 @@ class InstagramMCPSettings(BaseSettings):
     def parse_list_from_string(cls, v):
         """Parse comma-separated string into list."""
         if isinstance(v, str):
-            return [item.strip() for item in v.split(",")]
+            return [item.strip() for item in v.split(",") if item.strip()]
+        elif isinstance(v, list):
+            return v
+        return v
+
+    @field_validator("rate_limit_requests_per_hour", "rate_limit_posts_per_day", "cache_ttl_seconds", "max_request_size_mb", mode="before")
+    @classmethod
+    def parse_int_from_string(cls, v):
+        """Parse integer from string."""
+        if isinstance(v, str):
+            return int(v)
+        return v
+
+    @field_validator("cache_enabled", "rate_limit_enable_backoff", "enable_request_validation", "debug_mode", "mock_api_responses", "enable_metrics", "database_echo", mode="before")
+    @classmethod
+    def parse_bool_from_string(cls, v):
+        """Parse boolean from string."""
+        if isinstance(v, str):
+            return v.lower() in ("true", "1", "yes", "on")
         return v
 
     @field_validator("log_level")

@@ -274,13 +274,11 @@ class InstagramClient:
             media_list = []
 
             for item in data.get("data", []):
-                # Convert timestamp to datetime
-                if "timestamp" in item:
-                    item["timestamp"] = datetime.fromisoformat(
-                        item["timestamp"].replace("Z", "+00:00")
-                    )
-
-                media_list.append(InstagramMedia(**item))
+                try:
+                    media_list.append(InstagramMedia(**item))
+                except Exception as item_error:
+                    logger.error("Failed to parse media item", item=item, error=str(item_error))
+                    raise item_error
 
             return media_list
 
@@ -294,7 +292,6 @@ class InstagramClient:
         """Get insights for a specific media post."""
         if not metrics:
             metrics = [
-                InsightMetric.IMPRESSIONS,
                 InsightMetric.REACH,
                 InsightMetric.LIKES,
                 InsightMetric.COMMENTS,
